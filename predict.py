@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import json
+import os
 import pickle
 from pathlib import Path
 
@@ -10,12 +10,17 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 model = None
+MODEL_PATH = Path(os.getenv("MODEL_PATH", "model.pkl"))
 
 
 def load_model(model_path: Path) -> None:
     global model
     with model_path.open("rb") as f:
         model = pickle.load(f)
+
+
+if MODEL_PATH.exists():
+    load_model(MODEL_PATH)
 
 
 @app.route("/health", methods=["GET"])
